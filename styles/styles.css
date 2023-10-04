@@ -64,3 +64,49 @@ header h1 a {
     height: 100vh;
     width: 100vw;
 }
+
+img.feed-item-profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.feed-item {
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: black 1px solid;
+}
+
+.feed-item-footer {
+    padding: 3px;
+    margin-right: 5px;
+}
+
+.feed-item-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.feed-item-post-image {
+    width: 50%;
+    height: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 750px) {
+    .feed-item {
+        width: 65%;
+    }
+    
+}

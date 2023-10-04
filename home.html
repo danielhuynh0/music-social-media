@@ -18,31 +18,31 @@
                 Music App
             </h1>
         </header>
-        <div class="main">
-            <div class="feed-container">
-                <div class="feed-item">
-                    <div class="feed-item-header">
-                        <div class="feed-item-header-left">
-                            <img src="images/profile.png" alt="profile picture" class="feed-item-profile-picture">
-                            <div class="feed-item-header-left-text">
-                                <h3>Username</h3>
-                                <h4>Location</h4>
+        <div class="main d-flex flex-column">
+            <h1 id="feed-heading">Your Feed</h1>
+            <div class="feed d-flex flex-column justify-content-center">
+                <div class="feed-container d-flex justify-content-center">
+                    <div class="feed-item card p-5 m-3">
+                        <div class="feed-item-header">
+                            <div class="feed-item-header-left">
+                                <img src="images/profile.jpg" alt="profile picture" class="feed-item-profile-picture">
+                                <div class="feed-item-header-left-text">
+                                    <h4>@username</h4>
+                                </div>
                             </div>
                         </div>
-                        <div class="feed-item-header-right">
-                            <h4>Genre</h4>
+                        <div class="feed-item-content">
+                            <h2>My Sample Post Title - My Favorite Album</h2>
+                            <img src="images/album.jpg" alt="album cover" class="feed-item-post-image">
+                            <p>Sample post content! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolor consectetur quos a delectus nulla ut velit aspernatur adipisci. Maiores reprehenderit voluptates ullam sunt blanditiis mollitia culpa? Harum, suscipit iusto. Amet?</p>
                         </div>
-                    </div>
-                    <div class="feed-item-content">
-                        <h2>Post Title</h2>
-                        <p>Post Content</p>
-                    </div>
-                    <div class="feed-item-footer">
-                        <div class="feed-item-footer-left">
-                            <h4>Comments</h4>
-                        </div>
-                        <div class="feed-item-footer-right">
-                            <h4>Like</h4>
+                        <div class="feed-item-footer d-flex flex-row flex-wrap justify-content-left">
+                            <div class="feed-item-footer">
+                                <h5 class="btn">Comments</h5>
+                            </div>
+                            <div class="feed-item-footer">
+                                <h5 class="btn">Like</h5>
+                            </div>
                         </div>
                     </div>
                 </div>
