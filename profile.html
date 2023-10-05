@@ -5,11 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Music App - User Feed</title>
-
-    <meta name="author" content="Music App">
-    <meta name="description" content="User feed for the music app">
-    <meta name="keywords" content="define keywords for search engines">
+    <title>Music App - Search</title>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
@@ -28,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="/home.html" class="nav-link active">Home</a>
+                        <a href="/home.html" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="/search.html" class="nav-link">Search</a>
@@ -37,7 +33,6 @@
                         <a href="/communities.html" class="nav-link">Communities</a>
                     </li>
                 </ul>
-                
                 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown hover-dropdown">
@@ -54,23 +49,29 @@
         </div>
     </header>
 
-            <div class="main">
-                <div class="login-container">
-                    <h1>Login</h1>
-                    <form action="home.html" class="login-form">
-                        <div class="form-floating">
-                            <input type="email" class="form-control login-field" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" class="form-control login-field" id="floatingPassword" placeholder="Password">
-                            <label for="floatingPassword">Password</label>
-                        </div>
-                        <input class="btn btn-dark" id="login-submit-btn" type="submit" value="Login"/>
-                    </form>
-                </div>
-
+    <div class="container mt-4">
+        <h1 class="text-center">Profile</h1>
+        
+        <div class="profile-info mt-4 d-flex">
+            <img src="images/profile.jpg" alt="User Profile Picture" class="rounded-circle" width="100">
+            <div class="ml-3">
+                <h3>Username</h3>
+                <p>Email: user@example.com</p>
+                <p>Joined: January 1, 2023</p>
             </div>
         </div>
-    </body>
+        
+        <div class="user-posts mt-4">
+            <h3>My Posts</h3>
+            <ul class="list-group">
+                <li class="list-group-item">Post Title 1</li>
+                <li class="list-group-item">Post Title 2</li>
+
+            </ul>
+        </div>
+    </div>
+    
+    
+</body>
+
 </html>

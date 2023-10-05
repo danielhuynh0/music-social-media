@@ -5,11 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Music App - User Feed</title>
-
-    <meta name="author" content="Music App">
-    <meta name="description" content="User feed for the music app">
-    <meta name="keywords" content="define keywords for search engines">
+    <title>Music App - Search</title>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
@@ -28,16 +24,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="/home.html" class="nav-link active">Home</a>
+                        <a href="/home.html" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/search.html" class="nav-link">Search</a>
+                        <a href="/search.html" class="nav-link active">Search</a>
                     </li>
                     <li class="nav-item">
                         <a href="/communities.html" class="nav-link">Communities</a>
                     </li>
                 </ul>
-                
                 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown hover-dropdown">
@@ -54,23 +49,23 @@
         </div>
     </header>
 
-            <div class="main">
-                <div class="login-container">
-                    <h1>Login</h1>
-                    <form action="home.html" class="login-form">
-                        <div class="form-floating">
-                            <input type="email" class="form-control login-field" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="password" class="form-control login-field" id="floatingPassword" placeholder="Password">
-                            <label for="floatingPassword">Password</label>
-                        </div>
-                        <input class="btn btn-dark" id="login-submit-btn" type="submit" value="Login"/>
-                    </form>
-                </div>
-
-            </div>
+    <div class="container mt-4">
+        <h1 class="text-center">Search for Music</h1>
+        <div class="search-bar mt-4 d-flex justify-content-center">
+            <input type="text" class="form-control w-50" placeholder="Enter artist, song, or album...">
+            <button class="btn btn-primary ml-2">Search</button>
         </div>
-    </body>
+
+        <div class="search-results mt-4">
+            <h3>Results:</h3>
+            <ul class="list-group">
+                <li class="list-group-item">Song 1 by Artist A</li>
+                <li class="list-group-item">Song 2 by Artist B</li>
+                <li class="list-group-item">Album X by Artist A</li>
+                <li class="list-group-item">Song 3 by Artist C</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
 </html>
