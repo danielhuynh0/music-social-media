@@ -200,3 +200,6 @@ img.feed-item-profile-picture {
     display: block;
 }
 
+.post-title:hover {
+    font-weight: bold;
+}
