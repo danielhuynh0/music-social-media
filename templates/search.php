@@ -16,7 +16,7 @@
 <body>
     <header class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a href="index.html" class="navbar-brand">Music App</a>
+            <a href="?command=home" class="navbar-brand">Music App</a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -25,13 +25,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a href="home.html" class="nav-link">Home</a>
+                        <a href="?command=search" class="nav-link">Search</a>
                     </li>
                     <li class="nav-item">
-                        <a href="search.html" class="nav-link active">Search</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="communities.html" class="nav-link">Communities</a>
+                        <a href="?command=communities" class="nav-link">Communities</a>
                     </li>
                 </ul>
                 

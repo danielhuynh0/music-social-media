@@ -61,16 +61,31 @@ class MusicAppController
             case "login":
                 $this->login();
                 break;
+            case "search":
+                $this->showSearch();
+                break;
+            case "communities":
+                $this->showCommunities();
+                break;
+
             case "logout":
                 $this->logout();
             default:
-                $this->showHome();
+                $this->showLogin();
                 break;
         }
     }
 
     public function showLogin() {
         include("/opt/src/music-social-media/templates/login.php");
+    }
+
+    public function showSearch() {
+        include("/opt/src/music-social-media/templates/search.php");
+    }
+
+    public function showCommunities() {
+        include("/opt/src/music-social-media/templates/communities.php");
     }
 
 
