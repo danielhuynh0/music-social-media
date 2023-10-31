@@ -7,8 +7,6 @@ class MusicAppController
 {
     private $db;
 
-
-
     public function __construct($input)
     {
         session_start();
@@ -67,9 +65,6 @@ class MusicAppController
             }
         }
     }
-
-
-
 
 
     public function run()
@@ -260,7 +255,6 @@ class MusicAppController
 
 
 
-
     public function search()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['query'])) {
@@ -279,16 +273,12 @@ class MusicAppController
 
     private function performSearch($query)
     {
-        // Ensure the query is used safely, especially if interacting with a database
-        // For database operations, use prepared statements to avoid SQL Injection
-        // Return an array of search results
-        // ...
+
     }
 
     private function showSearchResults($results)
     {
-        // Generate and display HTML content based on search results
-        // ...
+
     }
 
     public function getPosts($username = null)
