@@ -7,8 +7,6 @@ class MusicAppController
 {
     private $db;
 
-
-
     public function __construct($input)
     {
         session_start();
@@ -21,8 +19,11 @@ class MusicAppController
 
     public function login()
     {
-        // Check if the request is a POST request
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            // GET request: Display the login HTML
+            $this->showLogin();
+        } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // POST request: Handle the login process
             if (
                 isset($_POST["username"]) && !empty($_POST["username"]) &&
                 isset($_POST["passwd"]) && !empty($_POST["passwd"])
@@ -45,7 +46,7 @@ class MusicAppController
                     // User does not exist, create a new user
                     $hashedPassword = password_hash($_POST["passwd"], PASSWORD_DEFAULT);
                     $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2);", $_POST["username"], $hashedPassword);
-                    
+
                     if (isset($createUser['error'])) {
                         // If there's an error, display it
                         $this->error("Error creating user account. Please contact support.");
@@ -62,13 +63,8 @@ class MusicAppController
                 $this->error("Username and password are required.");
                 return;
             }
-        } else {
-            // Not a POST request, show the login page
-            $this->showLogin();
         }
     }
-
-
 
 
     public function run()
@@ -107,7 +103,9 @@ class MusicAppController
             case "submit-new-post":
                 $this->submitNewPost();
                 break;
-
+            case "songDetails":
+                $this->songDetails();
+                break;
             case "logout":
                 $this->logout();
             default:
@@ -120,40 +118,61 @@ class MusicAppController
 
     public function showCreatePost()
     {
+        // Fetch songs from the database
+        $songs = $this->db->query("SELECT id, title FROM songs ORDER BY title;");
+
         include("/opt/src/music-social-media/templates/create-post.php");
     }
+
 
     public function submitNewPost()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if(!isset($_POST["post-title"]) || empty($_POST["post-title"])) {
+            if (!isset($_POST["post-title"]) || empty($_POST["post-title"])) {
                 $this->error("Post title is required.");
                 return;
             }
-            if(!isset($_POST["post-content"]) || empty($_POST["post-content"])) {
+            if (!isset($_POST["post-content"]) || empty($_POST["post-content"])) {
                 $this->error("Post content is required.");
                 return;
             }
-            if(!isset($_POST["song-title"]) || empty($_POST["song-title"])) {
-                $this->error("Song title is required.");
+            if (!isset($_POST["song-title"]) || empty($_POST["song-title"])) {
+                $this->error("Song is required.");
                 return;
             }
+            // Prepare data for insertion
             $post_title = $_POST["post-title"];
             $post_content = $_POST["post-content"];
-            $song_title = $_POST["song-title"];
+            $song_id = $_POST["song-title"];
 
-            $song_id = $this->db->query("SELECT id FROM songs WHERE title = $1;", $song_title)[0]["id"];
+            // Get the user's ID from the session username
 
-            $user_id = $this->db->query("SELECT id FROM users WHERE username = $1;", $_SESSION["username"])[0]["id"];
+            $userResult = $this->db->query("SELECT id FROM users WHERE username = $1;", $_SESSION["username"]);
+            if (isset($userResult['error'])) {
+                error_log("Database error in getting user ID: " . $userResult['error']);
+                $this->error("Database error: " . $userResult['error']);
+                return;
+            }
+            $user_id = $userResult[0]["id"];
 
-            $this->db->query("INSERT INTO posts (post_title, user_id, song_id, content) VALUES ($1, $2, $3, $4);", $post_title, $user_id, $song_id, $post_content);
+            // Insert the new post
+            $insertResult = $this->db->query("INSERT INTO posts (post_title, user_id, song_id, content) VALUES ($1, $2, $3, $4);", $post_title, $user_id, $song_id, $post_content);
+            if (isset($insertResult['error'])) {
+                error_log("Database error in inserting post: " . $insertResult['error']);
+                $this->error("Database error: " . $insertResult['error']);
+                return;
+            }
 
+            // Redirect to home after successful post creation
             header("Location: ?command=home");
             return;
         } else {
+            // Handle invalid request method
             $this->error("Invalid request.");
         }
     }
+
+
 
     public function error($errorMessage = '')
     {
@@ -192,8 +211,78 @@ class MusicAppController
     {
         include("/opt/src/music-social-media/templates/communities.php");
     }
+    public function showSongDetails()
+    {
+        include("/opt/src/music-social-media/templates/songDetails.php");
+    }
 
-    public function getPosts($username = null) {
+
+
+    public function songDetails()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['songId'])) {
+            $songId = $_GET['songId'];
+
+            // Fetch song details from the database
+            $songDetails = $this->getSongDetails($songId);
+
+            // Convert details to JSON and store in a session
+            $_SESSION['songDetailsJson'] = json_encode($songDetails);
+
+            // Redirect to the PHP file for displaying details
+            $this->showSongDetails();
+            exit;
+        } else {
+            // Handle the case where no song ID is provided or the request method is not GET
+            $this->error("Error"); // Redirect to an error page or handle differently
+            exit;
+        }
+    }
+
+    private function getSongDetails($songId)
+    {
+        $sql = "SELECT title, artist, album, genre FROM songs WHERE id = $1";
+
+        // Ensure $songId is an integer or a string, not an array
+        $result = $this->db->query($sql, (string) $songId);
+
+        if (is_array($result) && count($result) > 0) {
+            return $result[0];
+        } else {
+            return [];
+        }
+    }
+
+
+
+    public function search()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['query'])) {
+            $searchQuery = $_GET['query'];
+
+            // Perform the search operation with sanitized input
+            $searchResults = $this->performSearch($searchQuery);
+
+            // Display search results
+            $this->showSearchResults($searchResults);
+        } else {
+            // No search query provided, show default search page or message
+            echo "Please enter a search query.";
+        }
+    }
+
+    private function performSearch($query)
+    {
+
+    }
+
+    private function showSearchResults($results)
+    {
+
+    }
+
+    public function getPosts($username = null)
+    {
         $db = new Database();
         $query = "SELECT posts.*, users.username, songs.title AS song_title, songs.album 
                   FROM posts
@@ -209,7 +298,8 @@ class MusicAppController
         return $db->query($query);
     }
 
-    public function showHome() {
+    public function showHome()
+    {
         $username = $_SESSION["username"];
         $posts = $this->getPosts();
         include("/opt/src/music-social-media/home.php");
