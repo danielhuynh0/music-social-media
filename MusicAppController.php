@@ -7,47 +7,69 @@ class MusicAppController
 {
     private $db;
 
+
+
     public function __construct($input)
     {
         session_start();
 
         $this->input = $input;
+        $this->errorMessage = "";
         $this->db = new Database();
 
     }
 
-    public function login() {
-        // need a name, email, and password
-        if(isset($_POST["email"]) && !empty($_POST["email"]) &&
-            isset($_POST["passwd"]) && !empty($_POST["passwd"])) {
-
+    public function login()
+    {
+        // Check if the request is a POST request
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (
+                isset($_POST["username"]) && !empty($_POST["username"]) &&
+                isset($_POST["passwd"]) && !empty($_POST["passwd"])
+            ) {
                 // Check if user is in database
-                $res = $this->db->query("select * from users where email = $1;", $_POST["email"]);
-                if (empty($res)) {
-                    // User was not there, so insert them
-                    $this->db->query("insert into users (email, password) values ($1, $2);",
-                        $_POST["email"], password_hash($_POST["passwd"], PASSWORD_DEFAULT));
-                    $_SESSION["email"] = $_POST["email"];
-                    // Send user to the appropriate page (question)
-                    header("Location: ?command=home");
-                    return;
-                } else {
-                    // User was in the database, verify password
+                $res = $this->db->query("SELECT * FROM users WHERE username = $1;", $_POST["username"]);
+                if (!empty($res)) {
+                    // User exists, verify password
                     if (password_verify($_POST["passwd"], $res[0]["password"])) {
-                        // Password was correct
-                        $_SESSION["email"] = $res[0]["email"];
+                        // Password is correct
+                        $_SESSION["username"] = $res[0]["username"];
                         header("Location: ?command=home");
+                        exit;
+                    } else {
+                        // Incorrect password
+                        $this->error("Incorrect password.");
+                        return;
+                    }
+                } else {
+                    // User does not exist, create a new user
+                    $hashedPassword = password_hash($_POST["passwd"], PASSWORD_DEFAULT);
+                    $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2);", $_POST["username"], $hashedPassword);
+                    
+                    if (isset($createUser['error'])) {
+                        // If there's an error, display it
+                        $this->error("Error creating user account. Please contact support.");
                         return;
                     } else {
-                        $this->errorMessage = "Incorrect password.";
+                        // User successfully created, set session and redirect to home
+                        $_SESSION["username"] = $_POST["username"];
+                        header("Location: ?command=home");
+                        return; // Prevent further code execution
                     }
                 }
+            } else {
+                // Username and password are required
+                $this->error("Username and password are required.");
+                return;
+            }
         } else {
-            $this->errorMessage = "Email and password are required.";
+            // Not a POST request, show the login page
+            $this->showLogin();
         }
-        // If something went wrong, show the welcome page again
-        $this->showLogin();
     }
+
+
+
 
     public function run()
     {
@@ -61,11 +83,23 @@ class MusicAppController
             case "login":
                 $this->login();
                 break;
+            case "home":
+                $this->showHome();
+                break;
             case "search":
                 $this->showSearch();
                 break;
             case "communities":
                 $this->showCommunities();
+                break;
+            case "test":
+                $this->showTest();
+                break;
+            case "profile":
+                $this->showProfile();
+                break;
+            case "notifications":
+                $this->showNotifications();
                 break;
 
             case "logout":
@@ -76,25 +110,63 @@ class MusicAppController
         }
     }
 
-    public function showLogin() {
+    public function error($errorMessage = '')
+    {
+        include("/opt/src/music-social-media/templates/error.php");
+    }
+
+    public function showTest()
+    {
+        $res = $this->db->query("select * from users;");
+        $_SESSION["res"] = $res;
+        include("/opt/src/music-social-media/templates/test.php");
+    }
+
+    public function showLogin()
+    {
         include("/opt/src/music-social-media/templates/login.php");
     }
 
-    public function showSearch() {
+    public function showProfile()
+    {
+        include("/opt/src/music-social-media/templates/profile.php");
+    }
+
+    public function showNotifications()
+    {
+        include("/opt/src/music-social-media/templates/notifications.php");
+    }
+
+    public function showSearch()
+    {
         include("/opt/src/music-social-media/templates/search.php");
     }
 
-    public function showCommunities() {
+    public function showCommunities()
+    {
         include("/opt/src/music-social-media/templates/communities.php");
     }
 
 
 
+    public function getPosts() {
+        // SQL query to fetch posts, joined with users and songs
+        $query = "SELECT posts.*, users.username, songs.title AS song_title, songs.album 
+                  FROM posts
+                  JOIN users ON posts.user_id = users.id
+                  JOIN songs ON posts.song_id = songs.id
+                  ORDER BY posts.post_date DESC";
+        return $this->db->query($query);
+    }
+
     public function showHome() {
+        $username = $_SESSION["username"];
+        $posts = $this->getPosts();
         include("/opt/src/music-social-media/home.php");
     }
 
-    public function logout() {
+    public function logout()
+    {
         session_destroy();
 
         session_start();

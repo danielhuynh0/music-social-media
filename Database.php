@@ -10,16 +10,22 @@ class Database {
         $port = Config::$db["port"];
 
         $this->dbConnector = pg_connect("host=$host port=$port dbname=$database user=$user password=$password");
+        if ($this->dbConnector === false) {
+            error_log('Database connection error: ' . pg_last_error());
+            throw new Exception("Unable to connect to the database.");
+        }
     }
 
     public function query($query, ...$params) {
         $res = pg_query_params($this->dbConnector, $query, $params);
         if ($res === false) {
-            echo pg_last_error($this->dbConnector);
-            return false;
+            // Log the error for debugging
+            error_log('Database query error: ' . pg_last_error($this->dbConnector));
+            return ['error' => pg_last_error($this->dbConnector)];
         }
         return pg_fetch_all($res);
     }
 }
+
 ?>
 
