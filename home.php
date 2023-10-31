@@ -54,7 +54,13 @@
     </header>
 
     <div class="main d-flex flex-column align-items-center">
-        <h1 id="feed-heading" class="mt-4">Your Feed</h1>
+        <div class="d-flex flex-column align-items-center card p-5 w-100 mb-3">
+            <h3 class="mb-5">Create New Post</h3>
+            <button>
+                <a href="?command=create-post" class="btn">Create Post</a>
+            </button>
+        </div>
+        <h1 id="feed-heading" class="mt-3">Your Feed</h1>
         <?php foreach ($posts as $post): ?>
             <div class="feed-item card p-5 m-3 w-75">
                 <div class="feed-item-header d-flex align-items-center">
@@ -63,7 +69,8 @@
                 </div>
 
                 <div class="feed-item-content mt-3">
-                    <h2 class="post-title"><?= $post['song_title'] ?> - <?= $post['album'] ?></h2>
+                    <h2 class="post-title"><?= $post['post_title'] ?></h2>
+                    <h3 class="song-info"><?= $post['song_title'] ?> - <?= $post['album'] ?></h3>
                     <div class="img-wrapper">
                         <img src="../images/album.jpg" alt="album cover" class="feed-item-post-image mb-3">
                         <input type="range" class="custom-range mt-3" title="song-scroll-bar">

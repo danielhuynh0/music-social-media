@@ -58,6 +58,7 @@ if (!$res) {
 // Create Posts Table
 $res = pg_query($dbHandle, "CREATE TABLE IF NOT EXISTS posts (
     id SERIAL PRIMARY KEY,
+    post_title VARCHAR(100),
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     song_id INT REFERENCES songs(id) ON DELETE SET NULL,
     content TEXT,
@@ -139,14 +140,14 @@ foreach ($songs as $query) {
 
 // Posts
 $posts = [
-    "INSERT INTO posts (user_id, song_id, content) VALUES (1, 1, 'Loving this new song!');",
-    "INSERT INTO posts (user_id, song_id, content) VALUES (2, 2, 'This track is amazing!');"
+    "INSERT INTO posts (post_title, user_id, song_id, content) VALUES ('new song by drake!', 1, 1, 'Loving this new song!');",
+    "INSERT INTO posts (post_title, user_id, song_id, content) VALUES ('check out michael jackson', 2, 2, 'This track is amazing!');"
 ];
 
 foreach ($posts as $query) {
     pg_query($dbHandle, $query);
 }
 
-echo "Database setup with filler data complete.\n";
+echo "Database setup with new filler data complete.\n";
 ?>
 
