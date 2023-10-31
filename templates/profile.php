@@ -53,74 +53,47 @@
     </header>
 
     <div class="container mt-4">
-        <h1 class="text-center">Profile</h1>
-        
-        <div class="profile-info mt-4 d-flex">
-            <img src="images/profile.jpg" alt="User Profile Picture" class="rounded-circle" width="100">
-            <div class="ml-3">
-                <h3><?php 
-                echo $_SESSION["username"]?></h3>
-                <p>Email: user@example.com</p>
-                <p>Joined: January 1, 2023</p>
-            </div>
-        </div>
-        
-        <div class="user-posts mt-4">
-            <h3>My Posts</h3>
-            <ul class="list-group">
-                <?php
-                require_once('../Database.php');
-                require_once('../Config.php');
-                $db = new Database();
-
-                $query = "SELECT posts.*, songs.title AS song_title, songs.album AS song_album
-                FROM posts
-                JOIN users ON posts.user_id = users.id
-                LEFT JOIN songs ON posts.song_id = songs.id
-                WHERE users.username = " . $_SESSION["username"] . 
-                " ORDER BY posts.post_date DESC;";
-                $res = $db->query($query);
-
-                foreach ($res as $post) {
-                    
-                    echo '
-                        <div class="feed-item card p-5 m-3 w-75">
-                            <div class="feed-item-header d-flex align-items-center">
-                                <img src="/images/profile.jpg" alt="profile picture" class="feed-item-profile-picture">
-                                <h4 class="ml-3">@<?= ' . $post['username'] . ' ?></h4>
-                            </div>
-
-                            <div class="feed-item-content mt-3">
-                                <h2 class="post-title"><?= '.$post['post_title'].' ?></h2>
-                                <h3 class="song-info"><?= '.$post['song_title'].' ?> - <?= '.$post['album'].' ?></h3>
-                                <div class="img-wrapper">
-                                    <img src="../images/album.jpg" alt="album cover" class="feed-item-post-image mb-3">
-                                    <input type="range" class="custom-range mt-3" title="song-scroll-bar">
-                                </div>
-                                <audio class="player" src="path_to_music_file.mp3" preload="auto"></audio>
-                                <div class="player-controls d-flex justify-content-center align-items-center mt-3">
-                                    <button class="icon-button mx-2" title="Share"><i class="material-icons">share</i></button>
-                                    <button class="icon-button mx-2" title="Previous"><i class="material-icons">skip_previous</i></button>
-                                    <button class="icon-button mx-2" title="Play"><i class="material-icons">play_circle_filled</i></button>
-                                    <button class="icon-button mx-2" title="Next"><i class="material-icons">skip_next</i></button>
-                                    <button class="icon-button mx-2" title="Like"><i class="material-icons">favorite</i></button>
-                                </div>
-                                <p><?= ' . $post['content'] . ' ?></p>
-                            </div>
-
-                            <div class="feed-item-footer d-flex flex-row flex-wrap justify-content-left">
-                                <button class="text-button mx-2">Comments</button>
-                            </div>
-                        </div>
-                    ';
-                }
-                 ?>
-                <li class="list-group-item">Post Title 1</li>
-                <li class="list-group-item">Post Title 2</li>
-
-            </ul>
+    <h1 class="text-center">Profile</h1>
+    
+    <div class="profile-info mt-4 d-flex">
+        <img src="images/profile.jpg" alt="User Profile Picture" class="rounded-circle" width="100">
+        <div class="ml-3">
+            <h3><?php echo $_SESSION["username"]; ?></h3>
+            <p>Joined: January 1, 2023</p>
         </div>
     </div>
+    
+    <div class="main d-flex flex-column align-items-center">
+    <h1 id="feed-heading" class="mt-4">Your Feed</h1>
+    
+    <?php foreach ($posts as $post): ?>
+        <div class="feed-item card p-5 m-3 w-75">
+            <div class="feed-item-header d-flex align-items-center">
+                <img src="/images/profile.jpg" alt="profile picture" class="feed-item-profile-picture">
+                <h4 class="ml-3">@<?= $post['username'] ?></h4>
+            </div>
+
+            <div class="feed-item-content mt-3">
+                <h2 class="post-title"><?= $post['song_title'] ?> - <?= $post['album'] ?></h2>
+                <div class="img-wrapper">
+                    <img src="../images/album.jpg" alt="album cover" class="feed-item-post-image mb-3">
+                    <input type="range" class="custom-range mt-3" title="song-scroll-bar">
+                </div>
+
+                <audio class="player" src="path_to_music_file.mp3" preload="auto"></audio>
+                <div class="player-controls d-flex justify-content-center align-items-center mt-3">
+                </div>
+                <p><?= $post['content'] ?></p>
+            </div>
+
+            <div class="feed-item-footer d-flex flex-row flex-wrap justify-content-left">
+                <button class="text-button mx-2">Comments</button>
+            </div>
+        </div>
+    <?php endforeach; ?>
+    </div>
+</div>
+
     
     
 </body>

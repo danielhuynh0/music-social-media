@@ -116,6 +116,8 @@ class MusicAppController
         }
     }
 
+
+
     public function showCreatePost()
     {
         include("/opt/src/music-social-media/templates/create-post.php");
@@ -172,6 +174,7 @@ class MusicAppController
 
     public function showProfile()
     {
+        $posts = $this->getPosts($_SESSION["username"]);
         include("/opt/src/music-social-media/templates/profile.php");
     }
 
@@ -190,16 +193,20 @@ class MusicAppController
         include("/opt/src/music-social-media/templates/communities.php");
     }
 
-
-
-    public function getPosts() {
-        // SQL query to fetch posts, joined with users and songs
+    public function getPosts($username = null) {
+        $db = new Database();
         $query = "SELECT posts.*, users.username, songs.title AS song_title, songs.album 
                   FROM posts
                   JOIN users ON posts.user_id = users.id
-                  JOIN songs ON posts.song_id = songs.id
-                  ORDER BY posts.post_date DESC";
-        return $this->db->query($query);
+                  LEFT JOIN songs ON posts.song_id = songs.id";
+
+        if ($username !== null) {
+            $query .= " WHERE users.username = '$username'";
+        }
+
+        $query .= " ORDER BY posts.post_date DESC";
+
+        return $db->query($query);
     }
 
     public function showHome() {
