@@ -144,7 +144,7 @@ class MusicAppController
         // Fetch songs from the database
         $songs = $this->db->query("SELECT id, title FROM songs ORDER BY title;");
 
-        include("/opt/src/music-social-media/templates/create-post.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/create-post.php");
     }
 
 
@@ -199,44 +199,44 @@ class MusicAppController
 
     public function error($errorMessage = '')
     {
-        include("/opt/src/music-social-media/templates/error.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/error.php");
     }
 
     public function showTest()
     {
         $res = $this->db->query("select * from users;");
         $_SESSION["res"] = $res;
-        include("/opt/src/music-social-media/templates/test.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/test.php");
     }
 
     public function showLogin()
     {
-        include("/opt/src/music-social-media/templates/login.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/login.php");
     }
 
     public function showProfile()
     {
         $posts = $this->getPosts($_SESSION["username"]);
-        include("/opt/src/music-social-media/templates/profile.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/profile.php");
     }
 
     public function showNotifications()
     {
-        include("/opt/src/music-social-media/templates/notifications.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/notifications.php");
     }
 
     public function showSearch()
     {
-        include("/opt/src/music-social-media/templates/search.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/search.php");
     }
 
     public function showCommunities()
     {
-        include("/opt/src/music-social-media/templates/communities.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/communities.php");
     }
     public function showSongDetails()
     {
-        include("/opt/src/music-social-media/templates/songDetails.php");
+        include("/students/tap7ke/students/tap7ke/src/templates/songDetails.php");
     }
 
 
@@ -325,7 +325,7 @@ class MusicAppController
     {
         $username = $_SESSION["username"];
         $posts = $this->getPosts();
-        include("/opt/src/music-social-media/home.php");
+        include("/students/tap7ke/students/tap7ke/src/home.php");
     }
 
     public function logout()

@@ -82,7 +82,7 @@
                     </h3>
 
                     <div class="img-wrapper">
-                        <img src="../images/album.jpg" alt="album cover" class="feed-item-post-image mb-3">
+                        <img src="images/album.jpg" alt="album cover" class="feed-item-post-image mb-3">
                         <input type="range" class="custom-range mt-3" title="song-scroll-bar">
                     </div>
                     <audio class="player" src="path_to_music_file.mp3" preload="auto"></audio>

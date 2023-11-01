@@ -58,7 +58,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <form action="?command=login" method="post">
+            <form action="?command=login" method="post" class="m-3">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username"
