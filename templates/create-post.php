@@ -8,7 +8,7 @@
     <title>Music App - Create Post</title>
 
     <meta name="title" content="Music App">
-    <meta name="author" content="Daniel Huynh and Alex Fetea">
+    <meta name="author" content="<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->">
     <meta name="description" content="Create a new post for the music app">
     <meta name="keywords" content="define keywords for search engines">
 

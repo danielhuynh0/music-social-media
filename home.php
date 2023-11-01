@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Music App - User Feed</title>
 
-    <meta name="author" content="Daniel Huynh and Alex Fetea">
+    <meta name="author" content="<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->">
     <meta name="description" content="User feed for the music app">
     <meta name="keywords" content="define keywords for search engines">
 

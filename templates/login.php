@@ -8,7 +8,7 @@
     <title>Music App - Login</title>
 
     <meta name="title" content="Music App">
-    <meta name="author" content="Daniel Huynh and Alex Fetea">
+    <meta name="author" content="<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->">
     <meta name="description" content="User feed for the music app">
     <meta name="keywords" content="define keywords for search engines">
 
@@ -67,7 +67,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="passwd" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="passwd" name="passwd">
+                    <input type="password" class="form-control" id="passwd" name="passwd" aria-describedby="passwdHelp">
+                    <div id="passwdHelp" class="form-text">Enter a strong password (use at least one number)!</div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Start</button>

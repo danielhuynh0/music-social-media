@@ -1,3 +1,5 @@
+<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
+
 <?php
 require_once('Database.php');
 require_once('Config.php');
@@ -44,6 +46,12 @@ class MusicAppController
                     }
                 } else {
                     // User does not exist, create a new user
+                    $pattern = "/^[a-zA-Z0-9]*[0-9][a-zA-Z0-9]*$/";
+                    if(preg_match($pattern, $_POST["passwd"]) == false) {
+                        $this->error("Please enter a strong password (use at least one number).");
+                        return;
+                    }
+
                     $hashedPassword = password_hash($_POST["passwd"], PASSWORD_DEFAULT);
                     $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2);", $_POST["username"], $hashedPassword);
 
@@ -69,10 +77,14 @@ class MusicAppController
 
     public function run()
     {
+        $post_id = null;
         // Get the command
         $command = "login";
         if (isset($this->input["command"])) {
             $command = $this->input["command"];
+        }
+        if (isset($this->input["post_id"])) {
+            $post_id = $this->input["post_id"];
         }
 
         switch ($command) {
@@ -106,6 +118,9 @@ class MusicAppController
             case "songDetails":
                 $this->songDetails();
                 break;
+            case "delete":
+                $this->deletePost($post_id);
+                break;
             case "logout":
                 $this->logout();
             default:
@@ -114,6 +129,14 @@ class MusicAppController
         }
     }
 
+    public function deletePost($post_id)
+    {
+        $query = "DELETE FROM posts
+        WHERE id = $post_id";
+
+        $result = $this->db->query($query);
+        header("Location: ?command=home");
+    }
 
 
     public function showCreatePost()

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Music App - Profile</title>
-    <meta name="author" content="Daniel Huynh and Alex Fetea">
+    <meta name="author" content="<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->">
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
@@ -106,6 +106,7 @@
 
                     <div class="feed-item-footer d-flex flex-row flex-wrap justify-content-left">
                         <button class="text-button mx-2">Comments</button>
+                        <a href="?command=delete&post_id=<?= $post['id'] ?>" class="text-button mx-2 link-dark">Delete Post</a>
                     </div>
                 </div>
             <?php endforeach; ?>

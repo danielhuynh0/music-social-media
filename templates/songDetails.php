@@ -1,3 +1,5 @@
+<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
+
 <?php
 
 // Check if song details are set in the session
