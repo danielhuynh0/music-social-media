@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/opt/src/music-social-media/scripts/toggle-dark-mode.js"></script>
 </head>
 
 <body>
@@ -34,6 +35,9 @@
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
+                    <li>
+                        <button id="darkModeToggle" class="btn btn-light position-fixed top-0 end-0 m-3">Toggle Dark Mode</button>
+                    </li>
                     <li class="nav-item dropdown hover-dropdown">
                         <a class="nav-link dropdown-toggle active" href="javascript:void(0);" id="profileDropdown"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
