@@ -3,7 +3,7 @@ const username = document.getElementById('username');
 const password = document.getElementById('passwd');
 const errorMessage = document.getElementById('errorMessage');
 
-username.addEventListener("oninput", validateForm);
+username.addEventListener("input", validateForm);
 
 function validateForm() {
     let username_val = username.val;
