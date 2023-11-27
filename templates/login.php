@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/opt/src/music-social-media/styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/opt/src/music-social-media/scripts/scripts.js"></script>
 </head>
 
 <body>
@@ -70,6 +71,8 @@
                     <input type="password" class="form-control" id="passwd" name="passwd" aria-describedby="passwdHelp">
                     <div id="passwdHelp" class="form-text">Enter a strong password (use at least one number)!</div>
                 </div>
+
+                <p id="errorMessage"></p>
 
                 <button type="submit" class="btn btn-primary">Start</button>
             </form>
