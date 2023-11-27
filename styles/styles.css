@@ -203,3 +203,14 @@ img.feed-item-profile-picture {
 .post-title:hover {
     font-weight: bold;
 }
+
+body.dark-mode {
+    background-color: #121212; /* Dark background color */
+    color: #ffffff; /* White text color */
+}
+
+body.dark-mode .navbar,
+body.dark-mode .card {
+    background-color: #1f1f1f; /* Dark background color for navbar and cards */
+    border-color: #333; /* Dark border color */
+}
