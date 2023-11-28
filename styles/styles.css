@@ -205,12 +205,24 @@ img.feed-item-profile-picture {
 }
 
 body.dark-mode {
-    background-color: #121212; /* Dark background color */
-    color: #ffffff; /* White text color */
+    background-color: #121212; 
+    color: #ffffff; 
 }
 
 body.dark-mode .navbar,
 body.dark-mode .card {
-    background-color: #1f1f1f; /* Dark background color for navbar and cards */
-    border-color: #333; /* Dark border color */
+    background-color: #1f1f1f; 
+    color: #ffffff;
+}
+
+body.dark-mode .navbar-light .navbar-nav .nav-link {
+    color: #ffffff; 
+}
+
+body.dark-mode h1, h2, h3, h4, h5, h6 {
+    color: #ffffff; 
+}
+
+body.dark-mode div .card h1, h2, h3, h4, h5, h6, button {
+    color: #ffffff;
 }

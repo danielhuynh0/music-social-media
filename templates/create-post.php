@@ -13,9 +13,9 @@
     <meta name="keywords" content="define keywords for search engines">
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/opt/src/music-social-media/styles/styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="/opt/src/music-social-media/scripts/toggle-dark-mode.js"></script>
+    <script src="/students/tap7ke/students/tap7ke/src/scripts/toggle-dark-mode.js"></script>
 </head>
 
 <body>
