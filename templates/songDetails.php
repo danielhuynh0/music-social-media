@@ -18,10 +18,10 @@ if (isset($_SESSION['songDetailsJson'])) {
     <title>Song Details</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/students/tap7ke/students/tap7ke/src/scripts/toggle-dark-mode.js"></script>
 </head>
 <body>
-    <button id="darkModeToggle" class="btn btn-light position-fixed top-0 end-0 m-3">Toggle Dark Mode</button>
     <div class="container mt-5">
         <div class="card">
             <div class="card-header">

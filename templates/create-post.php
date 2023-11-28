@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/students/tap7ke/students/tap7ke/src/scripts/toggle-dark-mode.js"></script>
 </head>
 
@@ -28,6 +29,8 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <button id="darkModeToggle" class="btn btn-light m-3">Toggle Dark Mode</button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -37,8 +40,6 @@
                         <a href="?command=communities" class="nav-link">Communities</a>
                     </li>
                 </ul>
-
-                <button id="darkModeToggle" class="btn btn-light m-3">Toggle Dark Mode</button>
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown hover-dropdown">
