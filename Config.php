@@ -1,13 +1,12 @@
-<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
-
 <?php
+// Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 class Config {
     public static $db = [
-        'host' => "localhost",
+        'host' => "db",
         'port' => "5432",
-        'database' => "tap7ke",
-        'user' => "tap7ke",
-        'pass' => "GJV3AaVcIgxE"
+        'database' => "example",
+        'user' => "localuser",
+        'pass' => "cs4640LocalUser!"
     ];
 }
 ?>

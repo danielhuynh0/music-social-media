@@ -226,3 +226,26 @@ body.dark-mode h1, h2, h3, h4, h5, h6 {
 body.dark-mode div .card h1, h2, h3, h4, h5, h6, button {
     color: #ffffff;
 }
+button.liked {
+    background-color: #007bff; /* Or any color you prefer */
+    color: white;
+}
+.like-btn i {
+    color: red; /* Color of the like icon */
+}
+
+.dark-mode {
+    background-color: black;
+    color: white;
+}
+
+.dark-mode {
+    background-color: #333; /* Dark background */
+    color: #fff; /* Light text */
+}
+
+.dark-mode h1, .dark-mode p {
+    color: #fff; /* Ensure specific elements also change color */
+}
+
+

@@ -1,6 +1,6 @@
-<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
 
 <?php
+// Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 class Database {
     private $dbConnector;
 
@@ -19,6 +19,10 @@ class Database {
     }
 
     public function query($query, ...$params) {
+        if (count($params) == 1 && is_array($params[0])) {
+            $params = $params[0];
+        }
+    
         $res = pg_query_params($this->dbConnector, $query, $params);
         if ($res === false) {
             // Log the error for debugging
@@ -27,6 +31,7 @@ class Database {
         }
         return pg_fetch_all($res);
     }
+    
 }
 
 ?>

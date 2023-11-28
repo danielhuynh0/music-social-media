@@ -1,6 +1,5 @@
-<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
-
 <?php
+// Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 
 $host = "db";
 $port = "5432";
@@ -18,17 +17,20 @@ if ($dbHandle) {
 
 // Drop Existing Tables
 $dropTables = [
-    "DROP TABLE IF EXISTS post_shares CASCADE;",
-    "DROP TABLE IF EXISTS post_likes CASCADE;",
-    "DROP TABLE IF EXISTS comments CASCADE;",
-    "DROP TABLE IF EXISTS posts CASCADE;",
-    "DROP TABLE IF EXISTS songs CASCADE;",
-    "DROP TABLE IF EXISTS users CASCADE;"
+    "DROP TABLE IF EXISTS user_community;",
+    "DROP TABLE IF EXISTS post_shares;",
+    "DROP TABLE IF EXISTS post_likes;",
+    "DROP TABLE IF EXISTS comments;",
+    "DROP TABLE IF EXISTS posts;",
+    "DROP TABLE IF EXISTS communities;",
+    "DROP TABLE IF EXISTS songs;",
+    "DROP TABLE IF EXISTS users;"
 ];
 
 foreach ($dropTables as $query) {
     pg_query($dbHandle, $query);
 }
+
 
 // Create Users Table
 $res = pg_query($dbHandle, "CREATE TABLE IF NOT EXISTS users (
@@ -57,12 +59,26 @@ if (!$res) {
     echo pg_last_error($dbHandle);
 }
 
+// Create communities Table
+$res = pg_query($dbHandle, "CREATE TABLE IF NOT EXISTS communities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);");
+
+if (!$res) {
+    echo "An error occurred.\n";
+    echo pg_last_error($dbHandle);
+}
+
 // Create Posts Table
 $res = pg_query($dbHandle, "CREATE TABLE IF NOT EXISTS posts (
     id SERIAL PRIMARY KEY,
     post_title VARCHAR(100),
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     song_id INT REFERENCES songs(id) ON DELETE SET NULL,
+    community_id INT REFERENCES communities(id) ON DELETE SET NULL,
     content TEXT,
     post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     likes INT DEFAULT 0
@@ -118,6 +134,22 @@ if (!$res) {
 }
 
 
+
+$res = pg_query($dbHandle, "CREATE TABLE IF NOT EXISTS user_community (
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    community_id INT REFERENCES communities(id) ON DELETE CASCADE,
+    joined_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, community_id)
+);");
+
+
+if (!$res) {
+    echo "An error occurred.\n";
+    echo pg_last_error($dbHandle);
+}
+
+
+
 echo "Database setup complete.\n";
 
 
@@ -130,10 +162,25 @@ foreach ($users as $query) {
     pg_query($dbHandle, $query);
 }
 
+
+// Create Sample Communities
+$communities = [
+    "INSERT INTO communities (name, description) VALUES ('Music Lovers', 'A community for people who love music.');",
+    "INSERT INTO communities (name, description) VALUES ('Songwriters', 'A community for songwriters to share and discuss.');"
+];
+
+foreach ($communities as $query) {
+    $result = pg_query($dbHandle, $query);
+    if (!$result) {
+        echo "An error occurred while inserting communities.\n";
+        echo pg_last_error($dbHandle);
+    }
+}
+
 // Songs
 $songs = [
-    "INSERT INTO songs (title, artist, album, release_date, genre) VALUES ('Song 1', 'Artist 1', 'Album 1', '2023-01-01', 'Pop');",
-    "INSERT INTO songs (title, artist, album, release_date, genre) VALUES ('Song 2', 'Artist 2', 'Album 2', '2023-02-01', 'Rock');"
+    "INSERT INTO songs (title, artist, album, release_date, genre) VALUES ('Hotline Bling', 'Drake', 'Views', '2015-07-31', 'Pop, R&B');",
+    "INSERT INTO songs (title, artist, album, release_date, genre) VALUES ('Thriller', 'Michael Jackson','Thriller', '1982-11-29', 'Disco, Funk');"
 ];
 
 foreach ($songs as $query) {
@@ -142,12 +189,16 @@ foreach ($songs as $query) {
 
 // Posts
 $posts = [
-    "INSERT INTO posts (post_title, user_id, song_id, content) VALUES ('new song by drake!', 1, 1, 'Loving this new song!');",
-    "INSERT INTO posts (post_title, user_id, song_id, content) VALUES ('check out michael jackson', 2, 2, 'This track is amazing!');"
+    "INSERT INTO posts (post_title, user_id, song_id, content, community_id) VALUES ('New song by Drake!', 1, 1, 'Loving this new song!', 1);",
+    "INSERT INTO posts (post_title, user_id, song_id, content, community_id) VALUES ('Check out Michael Jackson', 2, 2, 'This track is amazing!', 2);"
 ];
 
 foreach ($posts as $query) {
-    pg_query($dbHandle, $query);
+    $result = pg_query($dbHandle, $query);
+    if (!$result) {
+        echo "An error occurred while inserting posts.\n";
+        echo pg_last_error($dbHandle);
+    }
 }
 
 echo "Database setup with new filler data complete.\n";

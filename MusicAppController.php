@@ -1,13 +1,16 @@
-<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
-
 <?php
+// Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 require_once('Database.php');
 require_once('Config.php');
+
 
 
 class MusicAppController
 {
     private $db;
+
+    // private $path = "/students/tap7ke/students/tap7ke/src";
+    private $path = "/opt/src/music-social-media/";
 
     public function __construct($input)
     {
@@ -37,6 +40,7 @@ class MusicAppController
                     if (password_verify($_POST["passwd"], $res[0]["password"])) {
                         // Password is correct
                         $_SESSION["username"] = $res[0]["username"];
+                        $_SESSION["user_id"] = $res[0]["id"]; // Store user_id in session
                         header("Location: ?command=home");
                         exit;
                     } else {
@@ -47,13 +51,13 @@ class MusicAppController
                 } else {
                     // User does not exist, create a new user
                     $pattern = "/^[a-zA-Z0-9]*[0-9][a-zA-Z0-9]*$/";
-                    if(preg_match($pattern, $_POST["passwd"]) == false) {
+                    if (preg_match($pattern, $_POST["passwd"]) == false) {
                         $this->error("Please enter a strong password (use at least one number).");
                         return;
                     }
 
                     $hashedPassword = password_hash($_POST["passwd"], PASSWORD_DEFAULT);
-                    $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2);", $_POST["username"], $hashedPassword);
+                    $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;", $_POST["username"], $hashedPassword);
 
                     if (isset($createUser['error'])) {
                         // If there's an error, display it
@@ -62,6 +66,7 @@ class MusicAppController
                     } else {
                         // User successfully created, set session and redirect to home
                         $_SESSION["username"] = $_POST["username"];
+                        $_SESSION["user_id"] = $createUser[0]["id"]; // Store the newly created user_id in session
                         header("Location: ?command=home");
                         return; // Prevent further code execution
                     }
@@ -75,16 +80,23 @@ class MusicAppController
     }
 
 
+
     public function run()
     {
         $post_id = null;
+        $community_id = null;
+        $user_id = $_SESSION["user_id"] ?? null;
+
         // Get the command
         $command = "login";
         if (isset($this->input["command"])) {
             $command = $this->input["command"];
         }
-        if (isset($this->input["post_id"])) {
-            $post_id = $this->input["post_id"];
+        if (isset($this->input["postId"])) {
+            $post_id = $this->input["postId"];
+        }
+        if (isset($this->input["community_id"])) {
+            $community_id = $this->input["community_id"];
         }
 
         switch ($command) {
@@ -99,6 +111,18 @@ class MusicAppController
                 break;
             case "communities":
                 $this->showCommunities();
+                break;
+            case "community":
+                $this->showCommunity();
+                break;
+            case "addComment":
+                $this->addComment();
+                break;
+            case "toggleLike":
+                $this->toggleLike();
+                break;
+            case "getPost":
+                $this->getPostById($post_id);
                 break;
             case "test":
                 $this->showTest();
@@ -121,6 +145,9 @@ class MusicAppController
             case "delete":
                 $this->deletePost($post_id);
                 break;
+            case "post":
+                $this->showPost($post_id);
+                break;
             case "logout":
                 $this->logout();
             default:
@@ -128,6 +155,261 @@ class MusicAppController
                 break;
         }
     }
+
+    public function showCommunity()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Extract communityId from the GET data
+            $communityId = $_GET['communityId'] ?? null;
+
+            // Validate communityId
+            if (!$communityId) {
+                // Handle the error - communityId is missing
+                http_response_code(400); // Bad Request
+                echo "Community ID is required.";
+                return;
+            }
+
+            // Fetch community details
+            $community = $this->getCommunityById($communityId);
+
+            if (!$community) {
+                // Handle the case where no community is found
+                http_response_code(404); // Not Found
+                echo "Community not found.";
+                return;
+            }
+
+            // Fetch posts for the community
+            $posts = $this->getPostsByCommunityId($communityId);
+
+            // Include the template and pass the community and posts data
+            include($this->path . "templates/community.php");
+        }
+    }
+
+    public function getPostsByCommunityId($communityId, $username = null)
+    {
+        $userId = $_SESSION["user_id"] ?? null; // Assuming user ID is stored in session
+
+        // Fetch posts
+        $query = "SELECT posts.*, users.username, songs.title AS song_title, songs.album 
+              FROM posts
+              JOIN users ON posts.user_id = users.id
+              LEFT JOIN songs ON posts.song_id = songs.id
+              WHERE posts.community_id = $1"; // Filter by community ID
+
+        $params = [$communityId]; // Initialize query parameters array with community ID
+
+        // Add username filter if provided
+        if ($username !== null) {
+            $query .= " AND users.username = $2";
+            $params[] = $username; // Add username to query parameters array
+        }
+
+        $query .= " ORDER BY posts.post_date DESC";
+
+        $posts = $this->db->query($query, $params); // Pass query and parameters array
+
+        // Fetch like count and status for each post
+        foreach ($posts as &$post) {
+            // Get like count
+            $likeCountQuery = "SELECT COUNT(*) AS like_count FROM post_likes WHERE post_id = $1";
+            $likeCountResult = $this->db->query($likeCountQuery, [$post['id']]);
+            $post['like_count'] = $likeCountResult[0]['like_count'] ?? 0;
+
+            // Check if the current user liked the post
+            if ($userId !== null) {
+                $userLikeQuery = "SELECT 1 FROM post_likes WHERE post_id = $1 AND user_id = $2";
+                $userLikeResult = $this->db->query($userLikeQuery, [$post['id'], $userId]);
+                $post['user_liked'] = !empty($userLikeResult);
+            } else {
+                $post['user_liked'] = false;
+            }
+        }
+        unset($post); // Break the reference with the last element
+
+        return $posts;
+    }
+
+
+
+
+    public function showCommunities()
+    {
+        $username = $_SESSION["username"];
+        $communities = $this->getCommunities();
+        include($this->path . "templates/communities.php");
+    }
+
+
+
+    public function getCommunities()
+    {
+        $query = "SELECT id, name, description FROM communities";
+        $result = $this->db->query($query);
+        if ($result === false) {
+            // Handle error - e.g., log it and/or return an empty array
+            return [];
+        }
+        return $result;
+    }
+
+    public function getCommunityById($id)
+    {
+        $query = "SELECT * FROM communities WHERE id = $1";
+        $result = $this->db->query($query, [$id]);
+        if ($result === false || count($result) == 0) {
+            // Handle error or no result found
+            return null;
+        }
+        return $result[0];
+    }
+
+
+    public function toggleLike()
+    {
+        // Check if the request is POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $postId = $_POST['postId'] ?? null;
+            $userId = $_SESSION['user_id'] ?? null;
+            
+    
+            if ($userId === null) {
+                header('Content-Type: application/json');
+                http_response_code(403); // Forbidden
+                echo json_encode(['message' => 'User not logged in']);
+                return;
+            }
+    
+            // Check if the user already liked the post
+            $likeCheckQuery = "SELECT 1 FROM post_likes WHERE post_id = $1 AND user_id = $2";
+            $likeCheckResult = $this->db->query($likeCheckQuery, [$postId, $userId]);
+    
+            $userLiked = false; // Default to user has not liked
+    
+            if (!empty($likeCheckResult)) {
+                // User has already liked the post, so remove the like
+                $deleteLikeQuery = "DELETE FROM post_likes WHERE post_id = $1 AND user_id = $2";
+                $this->db->query($deleteLikeQuery, [$postId, $userId]);
+            } else {
+                // User has not liked the post, so add a like
+                $addLikeQuery = "INSERT INTO post_likes (post_id, user_id) VALUES ($1, $2)";
+                $this->db->query($addLikeQuery, [$postId, $userId]);
+                $userLiked = true;
+            }
+    
+            // Get the updated like count
+            $likeCountQuery = "SELECT COUNT(*) AS like_count FROM post_likes WHERE post_id = $1";
+            $likeCountResult = $this->db->query($likeCountQuery, [$postId]);
+            $likeCount = $likeCountResult[0]['like_count'] ?? 0;
+    
+            // Return the updated like count and like status
+            header('Content-Type: application/json');
+            http_response_code(200); // OK
+            echo json_encode([
+                'likeCount' => $likeCount,
+                'userLiked' => $userLiked
+            ]);
+        }
+        else{
+            header('Content-Type: application/json');
+            http_response_code(403); // Forbidden
+            echo json_encode(['message' => 'Post requests only']);
+            return;
+        }
+    }
+    
+
+
+
+    public function addComment()
+    {
+        // Check if the request is POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Extract postId and commentText from the POST data
+            $postId = $_POST['postId'] ?? null;
+            $commentText = $_POST['commentText'] ?? null;
+            $userId = $_SESSION['user_id'] ?? null; // Assuming user ID is stored in session
+
+            // Validate inputs
+            if (!$postId || !$commentText || !$userId) {
+                // Invalid input
+                http_response_code(400); // Bad Request
+                echo json_encode(['message' => 'Invalid input']);
+                return;
+            }
+
+            $insertQuery = "INSERT INTO comments (post_id, user_id, comment) VALUES ($1, $2, $3)";
+            $result = $this->db->query($insertQuery, [$postId, $userId, $commentText]);
+
+            // Check if the result contains an error key
+            if (isset($result['error'])) {
+                // Handle database error
+                http_response_code(500); // Internal Server Error
+                echo json_encode(['message' => 'An error occurred: ' . $result['error']]);
+            } else {
+                http_response_code(200); // Created
+                echo json_encode(['message' => 'Comment added successfully']);
+            }
+        } else {
+            // If not a POST request
+            http_response_code(405); // Method Not Allowed
+            echo json_encode(['message' => 'Method Not Allowed']);
+        }
+    }
+
+
+
+    public function showPost($post_id)
+    {
+        $username = $_SESSION["username"];
+        $post = $this->getPostById($post_id);
+        include($this->path . "templates/post.php");
+    }
+
+
+    public function showTest()
+    {
+
+        // Set the content type to JS
+        include($this->path . "templates/test.php");
+    }
+
+    public function getLikeStatus($postId, $userId)
+    {
+        // Query to check if the user has liked the post
+        $query = "SELECT * FROM post_likes WHERE post_id = $1 AND user_id = $2";
+        $result = $this->db->query($query, [$postId, $userId]);
+
+        return !empty($result);
+    }
+
+
+
+    public function updateLikeStatus($postId, $userId, $like)
+    {
+        if ($like) {
+            // Add a like
+            $query = "INSERT INTO post_likes (post_id, user_id) VALUES ($1, $2)";
+        } else {
+            // Remove a like
+            $query = "DELETE FROM post_likes WHERE post_id = $1 AND user_id = $2";
+        }
+        $this->db->query($query, [$postId, $userId]);
+    }
+
+
+    public function getLikeCount($postId)
+    {
+        // Query to count likes for the post
+        $query = "SELECT COUNT(*) FROM post_likes WHERE post_id = $1";
+        $result = $this->db->query($query, [$postId]);
+
+        return $result[0]['count'] ?? 0;
+    }
+
+
 
     public function deletePost($post_id)
     {
@@ -143,8 +425,10 @@ class MusicAppController
     {
         // Fetch songs from the database
         $songs = $this->db->query("SELECT id, title FROM songs ORDER BY title;");
+        $communities = $this->db->query("SELECT id, name FROM communities ORDER BY name;");
 
-        include("/students/tap7ke/students/tap7ke/src/templates/create-post.php");
+
+        include($this->path . "templates/create-post.php");
     }
 
 
@@ -163,10 +447,15 @@ class MusicAppController
                 $this->error("Song is required.");
                 return;
             }
+            if (!isset($_POST["community_id"]) || empty($_POST["community_id"])) {
+                $this->error("community_id");
+                return;
+            }
             // Prepare data for insertion
             $post_title = $_POST["post-title"];
             $post_content = $_POST["post-content"];
             $song_id = $_POST["song-title"];
+            $community_id = $_POST["community_id"];
 
             // Get the user's ID from the session username
 
@@ -179,7 +468,7 @@ class MusicAppController
             $user_id = $userResult[0]["id"];
 
             // Insert the new post
-            $insertResult = $this->db->query("INSERT INTO posts (post_title, user_id, song_id, content) VALUES ($1, $2, $3, $4);", $post_title, $user_id, $song_id, $post_content);
+            $insertResult = $this->db->query("INSERT INTO posts (post_title, user_id, song_id, content, community_id) VALUES ($1, $2, $3, $4, $5);", $post_title, $user_id, $song_id, $post_content, $community_id);
             if (isset($insertResult['error'])) {
                 error_log("Database error in inserting post: " . $insertResult['error']);
                 $this->error("Database error: " . $insertResult['error']);
@@ -199,45 +488,75 @@ class MusicAppController
 
     public function error($errorMessage = '')
     {
-        include("/students/tap7ke/students/tap7ke/src/templates/error.php");
-    }
-
-    public function showTest()
-    {
-        $res = $this->db->query("select * from users;");
-        $_SESSION["res"] = $res;
-        include("/students/tap7ke/students/tap7ke/src/templates/test.php");
+        include($this->path . "templates/error.php");
     }
 
     public function showLogin()
     {
-        include("/students/tap7ke/students/tap7ke/src/templates/login.php");
+        include($this->path . "templates/login.php");
     }
 
     public function showProfile()
     {
         $posts = $this->getPosts($_SESSION["username"]);
-        include("/students/tap7ke/students/tap7ke/src/templates/profile.php");
+        include($this->path . "templates/profile.php");
     }
 
     public function showNotifications()
     {
-        include("/students/tap7ke/students/tap7ke/src/templates/notifications.php");
+        include($this->path . "templates/notifications.php");
     }
 
     public function showSearch()
     {
-        include("/students/tap7ke/students/tap7ke/src/templates/search.php");
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            if (isset($_GET['query'])) {
+                if (isset($_GET['ajax'])) {
+                    header('Content-Type: application/json');
+                    $searchResults = $this->performSearch($_GET['query']);
+                    echo json_encode($searchResults);
+                    exit;
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(["error" => "Invalid request type"]);
+                    exit;
+                }
+            } else {
+                include($this->path . "templates/search.php");
+                exit;
+            }
+        }
     }
 
-    public function showCommunities()
+
+
+
+
+    private function performSearch($query)
     {
-        include("/students/tap7ke/students/tap7ke/src/templates/communities.php");
+        $sql = "SELECT id, title, artist, album FROM songs WHERE 
+                title ILIKE $1 OR artist ILIKE $1 OR album ILIKE $1";
+
+        $searchResults = $this->db->query($sql, ['%' . $query . '%']);
+
+        if (isset($searchResults['error'])) {
+            error_log("Database error in search: " . $searchResults['error']);
+            return [];
+        }
+        return $searchResults;
     }
+
+
     public function showSongDetails()
     {
-        include("/students/tap7ke/students/tap7ke/src/templates/songDetails.php");
+        include($this->path . "templates/songDetails.php");
     }
+
+    // private function showSearchResults($results)
+    // {
+    //     include($this->path . "templates/search-results.php");
+    // }
+
 
 
 
@@ -277,55 +596,95 @@ class MusicAppController
     }
 
 
-
-    public function search()
+    public function getPostById($postId)
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['query'])) {
-            $searchQuery = $_GET['query'];
+        $userId = $_SESSION["user_id"] ?? null; // Assuming user ID is stored in session
 
-            // Perform the search operation with sanitized input
-            $searchResults = $this->performSearch($searchQuery);
+        // Query to fetch a single post by post_id
+        $query = "SELECT posts.*, users.username, songs.title AS song_title, songs.album 
+                  FROM posts
+                  JOIN users ON posts.user_id = users.id
+                  LEFT JOIN songs ON posts.song_id = songs.id
+                  WHERE posts.id = $1";
 
-            // Display search results
-            $this->showSearchResults($searchResults);
-        } else {
-            // No search query provided, show default search page or message
-            echo "Please enter a search query.";
+        // Fetch the post
+        $postResult = $this->db->query($query, [$postId]);
+
+        if (empty($postResult)) {
+            return null; // No post found
         }
+
+        $post = $postResult[0];
+
+        // Get like count
+        $likeCountQuery = "SELECT COUNT(*) AS like_count FROM post_likes WHERE post_id = $1";
+        $likeCountResult = $this->db->query($likeCountQuery, [$postId]);
+        $post['like_count'] = $likeCountResult[0]['like_count'] ?? 0;
+
+        // Check if the current user liked the post
+        if ($userId !== null) {
+            $userLikeQuery = "SELECT 1 FROM post_likes WHERE post_id = $1 AND user_id = $2";
+            $userLikeResult = $this->db->query($userLikeQuery, [$postId, $userId]);
+            $post['user_liked'] = !empty($userLikeResult);
+        } else {
+            $post['user_liked'] = false;
+        }
+
+        // Fetch comments for the post
+        $commentsQuery = "SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE post_id = $1 ORDER BY comment_date DESC";
+        $commentsResult = $this->db->query($commentsQuery, [$postId]);
+        $post['comments'] = $commentsResult ?? [];
+
+        return $post;
     }
 
-    private function performSearch($query)
-    {
 
-    }
 
-    private function showSearchResults($results)
-    {
 
-    }
 
     public function getPosts($username = null)
     {
-        $db = new Database();
+        $userId = $_SESSION["user_id"] ?? null; // Assuming user ID is stored in session
+
+        // Fetch posts
         $query = "SELECT posts.*, users.username, songs.title AS song_title, songs.album 
                   FROM posts
                   JOIN users ON posts.user_id = users.id
                   LEFT JOIN songs ON posts.song_id = songs.id";
-
         if ($username !== null) {
             $query .= " WHERE users.username = '$username'";
         }
-
         $query .= " ORDER BY posts.post_date DESC";
+        $posts = $this->db->query($query);
 
-        return $db->query($query);
+        // Fetch like count and status for each post
+        foreach ($posts as &$post) {
+            // Get like count
+            $likeCountQuery = "SELECT COUNT(*) AS like_count FROM post_likes WHERE post_id = $1";
+            $likeCountResult = $this->db->query($likeCountQuery, [$post['id']]);
+            $post['like_count'] = $likeCountResult[0]['like_count'] ?? 0;
+
+            // Check if the current user liked the post
+            if ($userId !== null) {
+                $userLikeQuery = "SELECT 1 FROM post_likes WHERE post_id = $1 AND user_id = $2";
+                $userLikeResult = $this->db->query($userLikeQuery, [$post['id'], $userId]);
+                $post['user_liked'] = !empty($userLikeResult);
+            } else {
+                $post['user_liked'] = false;
+            }
+        }
+        unset($post); // Break the reference with the last element
+
+        return $posts;
     }
+
+
 
     public function showHome()
     {
         $username = $_SESSION["username"];
         $posts = $this->getPosts();
-        include("/students/tap7ke/students/tap7ke/src/home.php");
+        include($this->path . "home.php");
     }
 
     public function logout()

@@ -1,6 +1,6 @@
-<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->
 
 <?php
+// Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 
 // Check if song details are set in the session
 if (isset($_SESSION['songDetailsJson'])) {
@@ -43,5 +43,6 @@ if (isset($_SESSION['songDetailsJson'])) {
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
 </body>
 </html>
