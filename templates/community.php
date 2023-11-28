@@ -5,15 +5,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Music App - Communities</title>
+    <title>Music App - Community</title>
     <meta name="author" content="<!-- Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv) -->">
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
-    <!-- Howler.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.core.min.js"></script>
 </head>
 
@@ -24,9 +22,9 @@
     <div class="main d-flex flex-column align-items-center">
 
     <div class="feed-item p-5 m-3 w-75">
-        <div class="card h-100 shadow-sm"> <!-- Single card with shadow and height adjustment -->
-            <div class="card-header bg-primary text-white"> <!-- Card header with background -->
-                <h5 class="card-title mb-0"> <!-- Adjusted margins -->
+        <div class="card h-100 shadow-sm"> 
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
                     <a href="?command=community&id=<?= htmlspecialchars($community['id']) ?>" class="text-white text-decoration-none">
                         <?= htmlspecialchars($community['name']) ?>
                     </a>
@@ -41,7 +39,6 @@
     </div>
 
 
-        <!-- Posts Loop -->
         <h2>Posts in this Community</h2>
         <!-- Posts Loop -->
         <?php foreach ($posts as $post): ?>
@@ -63,7 +60,7 @@
 
                     <!-- Song Information -->
                     <h3 class="song-info">
-                        <a href="?command=songDetails&songId=<?= urlencode($post['song_id']) ?>">
+                        <a href="?command=song&songId=<?= urlencode($post['song_id']) ?>">
                             <?= htmlspecialchars($post['song_title']) ?> -
                             <?= htmlspecialchars($post['album']) ?>
                         </a>
@@ -101,10 +98,7 @@
         <?php endforeach; ?>
     </div>
 
-
-        <!-- JavaScript for Play/Pause Functionality -->
         <script>
-            // Object to store Howler sound instances
             var sounds = {};
             function initAndPlaySound(songId, songTitle) {
                 if (!sounds[songId]) {

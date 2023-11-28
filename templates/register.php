@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Music App - Login</title>
+    <title>Music App - Register</title>
 
     <meta name="title" content="Music App">
     <meta name="author" content="Daniel Huynh, Alex Fetea">
@@ -30,13 +30,13 @@
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username"
-                            aria-describedby="usernameHelp" aria-label="Username">
+                            aria-describedby="usernameHelp" aria-label="Username" required>
                         <div id="usernameHelp" class="form-text">Your unique username for the Music App.</div>
                     </div>
                     <div class="mb-3">
                         <label for="passwd" class="form-label">Password</label>
                         <input type="password" class="form-control" id="passwd" name="passwd"
-                            aria-describedby="passwdHelp" aria-label="Password">
+                            aria-describedby="passwdHelp" aria-label="Password" required>
                         <div id="passwdHelp" class="form-text">Enter a strong password (use at least one number)!</div>
                     </div>
 

@@ -48,7 +48,7 @@
                             results.forEach(function (song) {
                                 output += `<li class="list-group-item">
                                           <h3 class="song-info">
-                                              <a href="?command=songDetails&songId=${encodeURIComponent(song.id)}">
+                                              <a href="?command=song&songId=${encodeURIComponent(song.id)}">
                                                   ${song.title} - ${song.album}
                                               </a>
                                           </h3>
@@ -56,11 +56,9 @@
                             });
                             output += '</ul>';
                         } else {
-                            // Handle case where there are no search results
                             output = '<p>No results found for your search.</p>';
                         }
                     } else {
-                        // Handle non-array responses, such as an error message
                         console.error("Non-array response received:", results);
                     }
 

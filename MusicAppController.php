@@ -179,6 +179,9 @@ class MusicAppController
             case "submit-new-post":
                 $this->submitNewPost();
                 break;
+            case "song":
+                $this->showSong();
+                break;
             case "songDetails":
                 $this->songDetails();
                 break;
@@ -475,61 +478,38 @@ class MusicAppController
     public function submitNewPost()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (!isset($_POST["post-title"]) || empty($_POST["post-title"])) {
-                $this->error("Post title is required.");
-                return;
+            $postTitle = $_POST['post-title'] ?? '';
+            $postContent = $_POST['post-content'] ?? '';
+            $songId = $_POST['song-id'] ?? '';
+            $communityId = $_POST['community_id'] ?? '';
+    
+            if (empty($postTitle) || empty($postContent) || empty($songId) || empty($communityId)) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+                exit;
             }
-            if (!isset($_POST["post-content"]) || empty($_POST["post-content"])) {
-                $this->error("Post content is required.");
-                return;
-            }
-            if (!isset($_POST["song-title"]) || empty($_POST["song-title"])) {
-                $this->error("Song is required.");
-                return;
-            }
-            if (!isset($_POST["community_id"]) || empty($_POST["community_id"])) {
-                $this->error("community_id");
-                return;
-            }
-            // Prepare data for insertion
-            $post_title = $_POST["post-title"];
-            $post_content = $_POST["post-content"];
-            $song_id = $_POST["song-title"];
-            $community_id = $_POST["community_id"];
 
-            // Get the user's ID from the session username
-
-            $userResult = $this->db->query("SELECT id FROM users WHERE username = $1;", $_SESSION["username"]);
-            if (isset($userResult['error'])) {
-                error_log("Database error in getting user ID: " . $userResult['error']);
-                $this->error("Database error: " . $userResult['error']);
-                return;
-            }
-            $user_id = $userResult[0]["id"];
+            $user_id = $_SESSION["user_id"];
 
             // Insert the new post
-            $insertResult = $this->db->query("INSERT INTO posts (post_title, user_id, song_id, content, community_id) VALUES ($1, $2, $3, $4, $5);", $post_title, $user_id, $song_id, $post_content, $community_id);
+            $insertResult = $this->db->query("INSERT INTO posts (post_title, user_id, song_id, content, community_id) VALUES ($1, $2, $3, $4, $5);", $postTitle, $user_id, $songId, $postContent, $communityId);
             if (isset($insertResult['error'])) {
                 error_log("Database error in inserting post: " . $insertResult['error']);
-                $this->error("Database error: " . $insertResult['error']);
-                return;
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => "Database error: " . $insertResult['error']]);
+                exit;
             }
 
-            // Redirect to home after successful post creation
-            header("Location: ?command=home");
-            return;
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'message' => 'Post submitted successfully.']);
+            exit;
         } else {
-            // Handle invalid request method
-            $this->error("Invalid request.");
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+            exit;
         }
     }
 
-
-
-    public function error($errorMessage = '')
-    {
-        include($this->path . "templates/error.php");
-    }
 
     public function showLogin()
     {
@@ -592,9 +572,9 @@ class MusicAppController
     }
 
 
-    public function showSongDetails()
+    public function showSong()
     {
-        include($this->path . "templates/songDetails.php");
+        include($this->path . "templates/song.php");
     }
 
     // private function showSearchResults($results)
@@ -607,24 +587,25 @@ class MusicAppController
 
     public function songDetails()
     {
+        header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['songId'])) {
             $songId = $_GET['songId'];
-
+    
             // Fetch song details from the database
             $songDetails = $this->getSongDetails($songId);
-
-            // Convert details to JSON and store in a session
-            $_SESSION['songDetailsJson'] = json_encode($songDetails);
-
-            // Redirect to the PHP file for displaying details
-            $this->showSongDetails();
+    
+            echo json_encode(['status' => 'success', 'data' => $songDetails]);
             exit;
         } else {
-            // Handle the case where no song ID is provided or the request method is not GET
-            $this->error("Error"); // Redirect to an error page or handle differently
+            if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid request method. This endpoint only supports GET requests.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No song ID provided. Please specify a song ID to view details.']);
+            }
             exit;
         }
     }
+    
 
     private function getSongDetails($songId)
     {

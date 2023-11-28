@@ -18,7 +18,6 @@
         integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- Howler.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.core.min.js"></script>
 </head>
 
@@ -36,12 +35,8 @@
 
         <!-- Feed Heading -->
         <h1 id="feed-heading" class="mt-3">Your Feed</h1>
+        <?php foreach ($posts as $post): ?>
 
-        <!-- Posts Loop -->
-        <?php
-        //  echo json_encode($communities);
-        // echo json_encode($posts); 
-        foreach ($posts as $post): ?>
             <div class="feed-item card p-5 m-3 w-75">
                 <!-- Post Header -->
                 <div class="feed-item-header d-flex align-items-center">
@@ -60,7 +55,7 @@
 
                     <!-- Song Information -->
                     <h3 class="song-info">
-                        <a href="?command=songDetails&songId=<?= urlencode($post['song_id']) ?>">
+                        <a href="?command=song&songId=<?= urlencode($post['song_id']) ?>">
                             <?= htmlspecialchars($post['song_title']) ?> -
                             <?= htmlspecialchars($post['album']) ?>
                         </a>
@@ -71,9 +66,8 @@
                         <img src="images/album.jpg" alt="album cover" class="feed-item-post-image mb-3">
                     </div>
 
-                    <input type="range" class="custom-range mt-3" id="seekBar<?= htmlspecialchars($post['song_id']) ?>"
-                        value="0" min="0" max="100" step="1"
-                        oninput="seekAudio('<?= htmlspecialchars($post['song_id']) ?>', this.value)"
+                    <input type="range" class="custom-range mt-3" id="seekBar<?= htmlspecialchars($post['id']) ?>" value="0"
+                        min="0" max="100" step="1" oninput="seekAudio('<?= htmlspecialchars($post['id']) ?>', this.value)"
                         title="song-scroll-bar">
                     <script>
                         var sound<?= htmlspecialchars($post['song_id']) ?> = new Howl({
@@ -84,9 +78,10 @@
                     <!-- Player Controls -->
                     <div class="player-controls d-flex justify-content-center align-items-center mt-3">
                         <button class="icon-button mx-2" title="Play/Pause"
-                            onclick="togglePlayPause('<?= htmlspecialchars($post['song_id']) ?>', '<?= htmlspecialchars($post['song_title']) ?>')">
-                            <i class="material-icons"
-                                id="playPauseIcon<?= htmlspecialchars($post['song_id']) ?>">play_circle_filled</i>
+                            onclick="togglePlayPause('<?= htmlspecialchars($post['id']) ?>', '<?= htmlspecialchars($post['song_id']) ?>', '<?= htmlspecialchars($post['song_title']) ?>')">
+                            <i class="material-icons" id="playPauseIcon<?= htmlspecialchars($post['id']) ?>">
+                                play_circle_filled
+                            </i>
                         </button>
                     </div>
 
@@ -98,55 +93,46 @@
         <?php endforeach; ?>
     </div>
 
-    <!-- JavaScript for Play/Pause Functionality -->
     <script>
-        // Object to store Howler sound instances
-
-
-
-
         var sounds = {};
-        function initAndPlaySound(songId, songTitle) {
-            if (!sounds[songId]) {
-                sounds[songId] = new Howl({
-                    src: ['/music-social-media/audio/' + songTitle + '.mp3'],
+        function initAndPlaySound(post_id, song_id, song_title) {
+            if (!sounds[post_id]) {
+                sounds[post_id] = new Howl({
+                    src: ['/music-social-media/audio/' + song_title + '.mp3'],
                     onplay: function () {
-                        document.getElementById('playPauseIcon' + songId).innerHTML = 'pause_circle_filled';
-                        requestAnimationFrame(() => updateSeekBar(songId));
+                        document.getElementById('playPauseIcon' + post_id).innerHTML = 'pause_circle_filled';
+                        requestAnimationFrame(() => updateSeekBar(post_id, song_id));
                     }
                 });
             }
-            sounds[songId].play();
+            sounds[post_id].play();
         }
-        function togglePlayPause(songId, songTitle) {
-            var sound = sounds[songId];
-            var playPauseIcon = document.getElementById('playPauseIcon' + songId);
+        function togglePlayPause(post_id, song_id, song_title) {
+            var sound = sounds[post_id];
+            var playPauseIcon = document.getElementById('playPauseIcon' + post_id);
             if (sound && sound.playing()) {
                 sound.pause();
                 playPauseIcon.innerHTML = 'play_circle_filled';
             } else {
-                initAndPlaySound(songId, songTitle);
+                initAndPlaySound(post_id, song_id, song_title);
             }
         }
-        function updateSeekBar(songId) {
-            var sound = sounds[songId];
+        function updateSeekBar(post_id, song_id) {
+            var sound = sounds[post_id];
             if (sound && sound.playing()) {
-                var seekBar = document.getElementById('seekBar' + songId);
+                var seekBar = document.getElementById('seekBar' + post_id);
                 seekBar.max = sound.duration();
                 seekBar.value = sound.seek();
-                requestAnimationFrame(() => updateSeekBar(songId));
+                requestAnimationFrame(() => updateSeekBar(post_id, song_id));
             }
         }
-        function seekAudio(songId, value) {
-            var sound = sounds[songId];
+        function seekAudio(post_id, value) {
+            var sound = sounds[post_id];
             if (sound) {
                 sound.seek(value);
             }
         }
-    </script>
-
-
-
+    </script>]
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

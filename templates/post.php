@@ -5,15 +5,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Music App - User Feed</title>
+    <title>Music App - Post</title>
     <meta name="author" content="Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)">
     <meta name="description" content="User feed for the music app">
     <meta name="keywords" content="music, social media, user feed">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Howler.js Library -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
+        integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.core.min.js"></script>
 
 </head>
@@ -39,7 +42,7 @@
                     <?= htmlspecialchars($post['post_title']) ?>
                 </h2>
                 <h3 class="song-info">
-                    <a href="?command=songDetails&songId=<?= urlencode($post['song_id']) ?>">
+                    <a href="?command=song&songId=<?= urlencode($post['song_id']) ?>">
                         <?= htmlspecialchars($post['song_title']) ?> -
                         <?= htmlspecialchars($post['album']) ?>
                     </a>
@@ -57,7 +60,6 @@
                     });
                 </script>
                 <div class="player-controls d-flex justify-content-center align-items-center mt-3">
-                    <!-- <button class="icon-button mx-2" title="Share"><i class="material-icons">share</i></button> -->
                     <button class="icon-button mx-2" title="Play/Pause"
                         onclick="togglePlayPause('<?= htmlspecialchars($post['song_id']) ?>', '<?= htmlspecialchars($post['song_title']) ?>')">
                         <i class="material-icons"
@@ -152,7 +154,7 @@
         function addComment(postId) {
             var commentText = document.getElementById('commentText' + postId).value;
             var ajax = new XMLHttpRequest();
-            ajax.open("POST", "?command=addComment", true); // Update with your server endpoint
+            ajax.open("POST", "?command=addComment", true);
             ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             ajax.responseType = "json";
             ajax.send("postId=" + postId + "&commentText=" + encodeURIComponent(commentText));
@@ -166,15 +168,14 @@
 
                     let nocomments = document.getElementById('no-comments');
 
-                    if(nocomments){
+                    if (nocomments) {
                         nocomments.parentNode.removeChild(nocomments);
                     }
 
                     document.getElementById('commentText' + postId).value = '';
                 } else {
-                    // Handle error and display the server's response message
                     console.error("An error occurred while adding the comment:", this.response.message);
-                    alert("Error: " + this.response.message); // Displaying error message using alert for simplicity
+                    alert("Error: " + this.response.message);
                 }
             });
         }
