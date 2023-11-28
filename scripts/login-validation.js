@@ -1,22 +1,22 @@
+$(document).ready(function () {
+    $('#loginForm').submit(function (event) {
+        const username = $('#username').val();
+        const password = $('#passwd').val();
+        const errorMessage = $('#errorMessage');
 
-const username = document.getElementById('username');
-const password = document.getElementById('passwd');
-const errorMessage = document.getElementById('errorMessage');
+        // Regular expression pattern from PHP backend
+        const passwordPattern = /^[a-zA-Z0-9]*[0-9][a-zA-Z0-9]*$/;
 
-username.addEventListener("input", validateForm);
-
-function validateForm() {
-    let username_val = username.val;
-    let password_val = password.val;
-    const hasNumber = /\d/.test(password_val);
-    
-    if (username_val == "" || password_val == "") {
-        errorMessage.innerHTML = "Please fill out all fields";
-        return false;
-    }
-    else if(hasNumber == false) {
-        errorMessage.innerHTML = "Password must contain at least one number";
-        return false;
-    }
-    return true;
-}
+        if (username === "" || password === "") {
+            errorMessage.text("Please fill out all fields");
+            alert("Please fill out all fields");
+            event.preventDefault();
+            return false;
+        } else if (!passwordPattern.test(password)) {
+            errorMessage.text("Password must contain at least one number and consist of alphanumeric characters");
+            alert("Password must contain at least one number and consist of alphanumeric characters");
+            event.preventDefault();
+            return false;
+        }
+    });
+});

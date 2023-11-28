@@ -25,8 +25,8 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <h2 class="text-center mb-4">Login</h2>
-                <form id="loginForm" action="?command=login" method="post" class="m-3">
+                <h2 class="text-center mb-4">Register</h2>
+                <form id="loginForm" action="?command=register" method="post" class="m-3">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username"
@@ -42,8 +42,8 @@
 
                     <p id="errorMessage" class="text-danger"></p>
 
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <a href="?command=register" class="btn btn-secondary">Register</a>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <a href="?command=login" class="btn btn-secondary">Login</a>
                 </form>
             </div>
         </div>

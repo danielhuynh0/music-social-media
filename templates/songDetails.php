@@ -15,13 +15,20 @@ if (isset($_SESSION['songDetailsJson'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Song Details</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="/students/tap7ke/students/tap7ke/src/scripts/toggle-dark-mode.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Music App - Song Details</title>
+    <meta name="author" content="Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
+<?php include('navbar.php');?>
+
     <div class="container mt-5">
         <div class="card">
             <div class="card-header">
@@ -31,7 +38,8 @@ if (isset($_SESSION['songDetailsJson'])) {
                 <?php if ($songDetails): ?>
                     <p class="card-text"><strong>Title:</strong> <?php echo $songDetails->title ?? 'N/A'; ?></p>
                     <p class="card-text"><strong>Artist:</strong> <?php echo $songDetails->artist ?? 'N/A'; ?></p>
-                    <!-- Display other song details as needed -->
+                    <p class="card-text"><strong>Title:</strong> <?php echo $songDetails->title ?? 'N/A'; ?></p>
+                    <p class="card-text"><strong>Artist:</strong> <?php echo $songDetails->artist ?? 'N/A'; ?></p>
                 <?php else: ?>
                     <p>No song details available.</p>
                 <?php endif; ?>

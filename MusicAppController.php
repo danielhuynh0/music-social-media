@@ -25,59 +25,86 @@ class MusicAppController
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            // GET request: Display the login HTML
+            // Display the login form
             $this->showLogin();
         } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // POST request: Handle the login process
-            if (
-                isset($_POST["username"]) && !empty($_POST["username"]) &&
-                isset($_POST["passwd"]) && !empty($_POST["passwd"])
-            ) {
-                // Check if user is in database
+            $errorMsg = "";
+
+            if (!empty($_POST["username"]) && !empty($_POST["passwd"])) {
+                // Check if user exists in the database
                 $res = $this->db->query("SELECT * FROM users WHERE username = $1;", $_POST["username"]);
+
                 if (!empty($res)) {
-                    // User exists, verify password
+                    // Verify password
                     if (password_verify($_POST["passwd"], $res[0]["password"])) {
-                        // Password is correct
+                        // Set session variables and redirect
                         $_SESSION["username"] = $res[0]["username"];
-                        $_SESSION["user_id"] = $res[0]["id"]; // Store user_id in session
+                        $_SESSION["user_id"] = $res[0]["id"];
                         header("Location: ?command=home");
                         exit;
                     } else {
-                        // Incorrect password
-                        $this->error("Incorrect password.");
-                        return;
+                        $errorMsg = "Incorrect password.";
                     }
                 } else {
-                    // User does not exist, create a new user
-                    $pattern = "/^[a-zA-Z0-9]*[0-9][a-zA-Z0-9]*$/";
-                    if (preg_match($pattern, $_POST["passwd"]) == false) {
-                        $this->error("Please enter a strong password (use at least one number).");
-                        return;
-                    }
-
-                    $hashedPassword = password_hash($_POST["passwd"], PASSWORD_DEFAULT);
-                    $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;", $_POST["username"], $hashedPassword);
-
-                    if (isset($createUser['error'])) {
-                        // If there's an error, display it
-                        $this->error("Error creating user account. Please contact support.");
-                        return;
-                    } else {
-                        // User successfully created, set session and redirect to home
-                        $_SESSION["username"] = $_POST["username"];
-                        $_SESSION["user_id"] = $createUser[0]["id"]; // Store the newly created user_id in session
-                        header("Location: ?command=home");
-                        return; // Prevent further code execution
-                    }
+                    $errorMsg = "User does not exist.";
                 }
             } else {
-                // Username and password are required
-                $this->error("Username and password are required.");
-                return;
+                $errorMsg = "Username and password are required.";
+            }
+
+            if ($errorMsg) {
+                echo "<script>alert('" . $errorMsg . "');</script>";
+                $this->showLogin();
             }
         }
     }
+
+    public function register()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            // Display the registration form
+            $this->showRegister();
+        } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $errorMsg = "";
+
+            if (!empty($_POST["username"]) && !empty($_POST["passwd"])) {
+                // Check if username already exists
+                $userCheck = $this->db->query("SELECT 1 FROM users WHERE username = $1;", $_POST["username"]);
+
+                if (empty($userCheck)) {
+                    $pattern = "/^[a-zA-Z0-9]*[0-9][a-zA-Z0-9]*$/";
+
+                    if (!preg_match($pattern, $_POST["passwd"])) {
+                        $errorMsg = "Please enter a strong password (use at least one number).";
+                    } else {
+                        // Insert new user into database
+                        $hashedPassword = password_hash($_POST["passwd"], PASSWORD_DEFAULT);
+                        $createUser = $this->db->query("INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;", $_POST["username"], $hashedPassword);
+
+                        if (isset($createUser['error'])) {
+                            $errorMsg = "Error creating user account. Please contact support.";
+                        } else {
+                            $_SESSION["username"] = $_POST["username"];
+                            $_SESSION["user_id"] = $createUser[0]["id"];
+                            header("Location: ?command=home");
+                            return;
+                        }
+                    }
+                } else {
+                    $errorMsg = "Username already exists.";
+                }
+            } else {
+                $errorMsg = "Username and password are required.";
+            }
+
+            if ($errorMsg) {
+                echo "<script>alert('" . $errorMsg . "');</script>";
+                $this->showRegister();
+            }
+        }
+    }
+
+
 
 
 
@@ -87,11 +114,21 @@ class MusicAppController
         $community_id = null;
         $user_id = $_SESSION["user_id"] ?? null;
 
+
+
+
         // Get the command
         $command = "login";
         if (isset($this->input["command"])) {
             $command = $this->input["command"];
         }
+
+        if (!$user_id && $command!='register') {
+            $this->login();
+            return;
+        }
+
+
         if (isset($this->input["postId"])) {
             $post_id = $this->input["postId"];
         }
@@ -102,6 +139,9 @@ class MusicAppController
         switch ($command) {
             case "login":
                 $this->login();
+                break;
+            case "register":
+                $this->register();
                 break;
             case "home":
                 $this->showHome();
@@ -150,8 +190,9 @@ class MusicAppController
                 break;
             case "logout":
                 $this->logout();
+                break;
             default:
-                $this->showLogin();
+                $this->showHome();
                 break;
         }
     }
@@ -273,21 +314,21 @@ class MusicAppController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $postId = $_POST['postId'] ?? null;
             $userId = $_SESSION['user_id'] ?? null;
-            
-    
+
+
             if ($userId === null) {
                 header('Content-Type: application/json');
                 http_response_code(403); // Forbidden
                 echo json_encode(['message' => 'User not logged in']);
                 return;
             }
-    
+
             // Check if the user already liked the post
             $likeCheckQuery = "SELECT 1 FROM post_likes WHERE post_id = $1 AND user_id = $2";
             $likeCheckResult = $this->db->query($likeCheckQuery, [$postId, $userId]);
-    
+
             $userLiked = false; // Default to user has not liked
-    
+
             if (!empty($likeCheckResult)) {
                 // User has already liked the post, so remove the like
                 $deleteLikeQuery = "DELETE FROM post_likes WHERE post_id = $1 AND user_id = $2";
@@ -298,12 +339,12 @@ class MusicAppController
                 $this->db->query($addLikeQuery, [$postId, $userId]);
                 $userLiked = true;
             }
-    
+
             // Get the updated like count
             $likeCountQuery = "SELECT COUNT(*) AS like_count FROM post_likes WHERE post_id = $1";
             $likeCountResult = $this->db->query($likeCountQuery, [$postId]);
             $likeCount = $likeCountResult[0]['like_count'] ?? 0;
-    
+
             // Return the updated like count and like status
             header('Content-Type: application/json');
             http_response_code(200); // OK
@@ -311,15 +352,14 @@ class MusicAppController
                 'likeCount' => $likeCount,
                 'userLiked' => $userLiked
             ]);
-        }
-        else{
+        } else {
             header('Content-Type: application/json');
             http_response_code(403); // Forbidden
             echo json_encode(['message' => 'Post requests only']);
             return;
         }
     }
-    
+
 
 
 
@@ -494,6 +534,11 @@ class MusicAppController
     public function showLogin()
     {
         include($this->path . "templates/login.php");
+    }
+
+    public function showRegister()
+    {
+        include($this->path . "templates/register.php");
     }
 
     public function showProfile()
@@ -692,6 +737,8 @@ class MusicAppController
         session_destroy();
 
         session_start();
+        $this->showLogin();
+        return;
     }
 
 }

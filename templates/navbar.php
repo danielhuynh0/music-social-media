@@ -34,6 +34,7 @@
                         <li><a class="dropdown-item" href="?command=notifications">Notifications</a></li>
                         <li><a class="dropdown-item" href="#">Friends</a></li>
                         <li><a class="dropdown-item" href="#">Playlists</a></li>
+                        <li><a class="dropdown-item" href="?command=logout">Logout</a></li>
                     </ul>
                 </li>
             </ul>
