@@ -150,8 +150,8 @@
                 sound.seek(value);
             }
         }
-
-        function addComment(postId) {
+        //arrow function
+        const addComment = (postId) => {
             var commentText = document.getElementById('commentText' + postId).value;
             var ajax = new XMLHttpRequest();
             ajax.open("POST", "?command=addComment", true);
@@ -159,8 +159,8 @@
             ajax.responseType = "json";
             ajax.send("postId=" + postId + "&commentText=" + encodeURIComponent(commentText));
 
-            ajax.addEventListener("load", function () {
-                if (this.status == 200) {
+            ajax.addEventListener("load", () => {
+                if (ajax.status == 200) {
                     var newComment = document.createElement('div');
                     newComment.className = 'comment';
                     newComment.innerHTML = '<strong>' + username + ':</strong> <span>' + commentText + '</span>';
@@ -174,11 +174,11 @@
 
                     document.getElementById('commentText' + postId).value = '';
                 } else {
-                    console.error("An error occurred while adding the comment:", this.response.message);
-                    alert("Error: " + this.response.message);
+                    console.error("An error occurred while adding the comment:", ajax.response.message);
+                    alert("Error: " + ajax.response.message);
                 }
             });
-        }
+        };
 
         function toggleLike(postId) {
             var ajax = new XMLHttpRequest();

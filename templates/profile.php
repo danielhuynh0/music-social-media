@@ -51,7 +51,7 @@
 
                         <!-- Clickable Song Link -->
                         <h3 class="song-info">
-                            <a href="?command=songDetails&songId=<?= urlencode($post['song_id']) ?>">
+                            <a href="?command=song&songId=<?= urlencode($post['song_id']) ?>">
                                 <?= $post['song_title'] ?> -
                                 <?= $post['album'] ?>
                             </a>

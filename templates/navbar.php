@@ -30,10 +30,10 @@
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                         <li><a class="dropdown-item" href="?command=profile">My profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <!-- <li><a class="dropdown-item" href="#">Settings</a></li> -->
                         <li><a class="dropdown-item" href="?command=notifications">Notifications</a></li>
-                        <li><a class="dropdown-item" href="#">Friends</a></li>
-                        <li><a class="dropdown-item" href="#">Playlists</a></li>
+                        <!-- <li><a class="dropdown-item" href="#">Friends</a></li> -->
+                        <!-- <li><a class="dropdown-item" href="#">Playlists</a></li> -->
                         <li><a class="dropdown-item" href="?command=logout">Logout</a></li>
                     </ul>
                 </li>
