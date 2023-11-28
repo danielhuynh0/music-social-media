@@ -33,11 +33,9 @@
                         <a href="?command=communities" class="nav-link">Communities</a>
                     </li>
                 </ul>
+                <button id="darkModeToggle" class="btn btn-light m-3">Toggle Dark Mode</button>
 
                 <ul class="navbar-nav ms-auto">
-                    <li>
-                        <button id="darkModeToggle" class="btn btn-light position-fixed top-0 end-0 m-3">Toggle Dark Mode</button>
-                    </li>
                     <li class="nav-item dropdown hover-dropdown">
                         <a class="nav-link dropdown-toggle active" href="javascript:void(0);" id="profileDropdown"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
