@@ -71,7 +71,7 @@
                         title="song-scroll-bar">
                     <script>
                         var sound<?= htmlspecialchars($post['song_id']) ?> = new Howl({
-                            src: ['/music-social-media/audio/<?= htmlspecialchars($post['song_title']) ?>.mp3']
+                            src: ['audio/<?= htmlspecialchars($post['song_title']) ?>.mp3']
                         });
                     </script>
 
@@ -98,7 +98,7 @@
         function initAndPlaySound(post_id, song_id, song_title) {
             if (!sounds[post_id]) {
                 sounds[post_id] = new Howl({
-                    src: ['/music-social-media/audio/' + song_title + '.mp3'],
+                    src: ['audio/' + song_title + '.mp3'],
                     onplay: function () {
                         document.getElementById('playPauseIcon' + post_id).innerHTML = 'pause_circle_filled';
                         requestAnimationFrame(() => updateSeekBar(post_id, song_id));

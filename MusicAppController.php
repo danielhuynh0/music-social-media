@@ -9,8 +9,8 @@ class MusicAppController
 {
     private $db;
 
-    // private $path = "/students/tap7ke/students/tap7ke/src";
-    private $path = "/opt/src/music-social-media/";
+    private $path = "/students/tap7ke/students/tap7ke/src/";
+    // private $path = "/opt/src/music-social-media/";
 
     public function __construct($input)
     {

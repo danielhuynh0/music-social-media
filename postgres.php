@@ -1,11 +1,11 @@
 <?php
 // Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 
-$host = "db";
+$host = "localhost";
 $port = "5432";
-$database = "example";
-$user = "localuser";
-$password = "cs4640LocalUser!"; 
+$database = "tap7ke";
+$user = "tap7ke";
+$password = "GJV3AaVcIgxE"; 
 
 $dbHandle = pg_connect("host=$host port=$port dbname=$database user=$user password=$password");
 
@@ -202,5 +202,6 @@ foreach ($posts as $query) {
 }
 
 echo "Database setup with new filler data complete.\n";
+echo "Includes songs by Michael Jackson and Drake.\n";
 ?>
 

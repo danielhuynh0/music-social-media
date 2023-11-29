@@ -3,7 +3,7 @@
 
 <?php
 
-// https://cs4640.cs.virginia.edu/tap7ke/music-app/index.html
+// https://cs4640.cs.virginia.edu/tap7ke/music-app/
 // Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 
 error_reporting(E_ALL);

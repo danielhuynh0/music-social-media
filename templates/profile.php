@@ -37,7 +37,7 @@
             <?php foreach ($posts as $post): ?>
                 <div class="feed-item card p-5 m-3 w-75">
                     <div class="feed-item-header d-flex align-items-center">
-                        <img src="/images/profile.jpg" alt="profile picture" class="feed-item-profile-picture">
+                        <img src="images/profile.jpg" alt="profile picture" class="feed-item-profile-picture">
                         <h4 class="ml-3">@
                             <?= $post['username'] ?>
                         </h4>

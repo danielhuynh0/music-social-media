@@ -2,11 +2,11 @@
 // Authors: Daniel Huynh (tap7ke) and Alex Fetea (pvn5nv)
 class Config {
     public static $db = [
-        'host' => "db",
+        'host' => "localhost",
         'port' => "5432",
-        'database' => "example",
-        'user' => "localuser",
-        'pass' => "cs4640LocalUser!"
+        'database' => "tap7ke",
+        'user' => "tap7ke",
+        'pass' => "GJV3AaVcIgxE"
     ];
 }
 ?>
